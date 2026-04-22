@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TimeZone;
 
 @Configuration
@@ -29,8 +30,6 @@ public class Instantiation implements CommandLineRunner {
 
         userRepository.deleteAll();
         postRepository.deleteAll();
-        SimpleDateFormat sdf = new SimpleDateFormat("2018-");
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         User maria = new User(null, "Maria Brown", "maria@gmail.com");
         User alex = new User(null, "Alex Green", "alex@gmail.com");
@@ -39,7 +38,11 @@ public class Instantiation implements CommandLineRunner {
         userRepository.saveAll(Arrays.asList(maria, alex, bob));
 
         Post postMaria = new Post(null, LocalDate.parse("2026-03-21"), "Partiu viagem", "Vou viajar para São Paulo, abraços!", new AuthorDTO(maria));
+        Post postGreen = new Post(null, LocalDate.parse("2026-04-30"), "Bom dia","Acordei feliz hoje!", new AuthorDTO(maria));
 
-        postRepository.save(postMaria);
+        postRepository.saveAll(Arrays.asList(postMaria, postGreen));
+
+        maria.getPosts().addAll(Arrays.asList(postMaria, postGreen));
+        userRepository.save(maria);
     }
 }
