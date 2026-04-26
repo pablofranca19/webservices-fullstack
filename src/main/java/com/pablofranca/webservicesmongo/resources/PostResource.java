@@ -1,13 +1,12 @@
 package com.pablofranca.webservicesmongo.resources;
 
 import com.pablofranca.webservicesmongo.domain.Post;
+import com.pablofranca.webservicesmongo.resources.util.URL;
 import com.pablofranca.webservicesmongo.services.PostService;
 import com.pablofranca.webservicesmongo.services.exception.PostNotFoundException;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,5 +32,12 @@ public class PostResource {
         Optional<Post> post = Optional.of(postService.findById(id).orElseThrow(() -> new PostNotFoundException("Post not found with id " + id)));
         return ResponseEntity.ok(post);
      }
+
+    @GetMapping("/titlesearch")
+    public ResponseEntity<List<Post>> findPostByTitle (@RequestParam(value = "text", defaultValue = "") String text) {
+        text = URL.decodeTo(text);
+        List<Post> list = postService.findByTitle(text);
+        return ResponseEntity.ok().body(list);
+    }
 
 }
