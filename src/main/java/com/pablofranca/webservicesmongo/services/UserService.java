@@ -4,6 +4,7 @@ import com.pablofranca.webservicesmongo.domain.User;
 import com.pablofranca.webservicesmongo.repositories.UserRepository;
 import com.pablofranca.webservicesmongo.services.exception.IdNotFoundException;
 import com.pablofranca.webservicesmongo.services.exception.ObjectNotFoundException;
+import com.pablofranca.webservicesmongo.services.exception.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,11 @@ public class UserService {
     public User findById (String id) {
         Optional<User> obj = userRepository.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException("No user found with id " + id));
+    }
+
+    public List<User> findByName (String name) {
+        Optional<List<User>> user = Optional.of(userRepository.findUserByNameIgnoreCase(name));
+        return user.orElseThrow(() -> new UserNotFoundException("Coudldn't find an user with name '" + name + "'"));
     }
 
     public User insert (User user) {
