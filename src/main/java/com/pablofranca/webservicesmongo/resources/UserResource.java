@@ -4,8 +4,10 @@ import com.pablofranca.webservicesmongo.domain.Post;
 import com.pablofranca.webservicesmongo.domain.User;
 import com.pablofranca.webservicesmongo.dto.UserDTO;
 import com.pablofranca.webservicesmongo.services.UserService;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -16,10 +18,12 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/users")
 public class UserResource {
 
+    private final HandlerMapping defaultServletHandlerMapping;
     private UserService userService;
 
-    public UserResource(UserService userService) {
+    public UserResource(UserService userService, @Nullable HandlerMapping defaultServletHandlerMapping) {
         this.userService = userService;
+        this.defaultServletHandlerMapping = defaultServletHandlerMapping;
     }
 
     @GetMapping
@@ -64,5 +68,10 @@ public class UserResource {
         return ResponseEntity.ok(user.getPosts());
     }
 
+    @GetMapping("/usersearch")
+    public ResponseEntity<List<User>> findUserByName(@RequestParam(value = "name", defaultValue = "") String name) {
+        List<User> users = name.isEmpty() ? userService.findAll() : userService.findByName(name);
+        return ResponseEntity.ok().body(users);
+    }
 
 }
